@@ -1,0 +1,2220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dayholi Vision - Immersive VR Experience Builder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #0d1117 50%, #0a0a1a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes flashGold {
+            0% { box-shadow: 0 0 0 0 rgba(240, 214, 138, 0.6); }
+            100% { box-shadow: 0 0 0 12px rgba(240, 214, 138, 0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease;
+        }
+
+        .slide-up {
+            animation: slideUp 0.4s ease;
+        }
+
+        .flash-add {
+            animation: flashGold 0.6s ease;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 32px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            background: rgba(10, 10, 26, 0.85);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .nav-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #c9a040, #f0d68a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: #0a0a1a;
+        }
+
+        .nav-title {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #f0d68a, #c9a040);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .nav-btn {
+            padding: 8px 18px;
+            border-radius: 8px;
+            background: transparent;
+            color: #888;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .nav-btn.active {
+            background: rgba(201, 160, 64, 0.15);
+            color: #f0d68a;
+        }
+
+        .nav-btn.live::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ff4444;
+            display: inline-block;
+            margin-left: 6px;
+            animation: pulse 1.5s infinite;
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-icon-btn {
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.04);
+            color: #888;
+            font-size: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+        }
+
+        .nav-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #c9a040, #f0d68a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #0a0a1a;
+        }
+
+        /* Main content */
+        .container {
+            padding: 32px 32px 100px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Hero section */
+        .hero {
+            border-radius: 20px;
+            padding: 80px 60px;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, rgba(201, 160, 64, 0.08) 0%, rgba(10, 10, 26, 0.95) 100%);
+            border: 1px solid rgba(201, 160, 64, 0.12);
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 12px;
+            background: linear-gradient(90deg, #fff, #f0d68a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: 18px;
+            color: #999;
+            margin-bottom: 32px;
+            max-width: 500px;
+            line-height: 1.6;
+        }
+
+        .btn-primary {
+            padding: 14px 36px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #c9a040, #f0d68a);
+            color: #0a0a1a;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 24px rgba(201, 160, 64, 0.3);
+            transition: all 0.2s;
+            transform: translateY(0);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 32px rgba(201, 160, 64, 0.4);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .stat {
+            text-align: left;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #f0d68a;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        /* Section headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-filter {
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.04);
+            color: #888;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.2s;
+        }
+
+        .btn-filter.active {
+            background: rgba(201, 160, 64, 0.2);
+            color: #f0d68a;
+            border: 1px solid rgba(201, 160, 64, 0.3);
+        }
+
+        /* Cards */
+        .grid {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .grid-4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .card {
+            border-radius: 14px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(201, 160, 64, 0.2);
+        }
+
+        .card.selected {
+            border: 2px solid #f0d68a;
+            box-shadow: 0 0 20px rgba(201, 160, 64, 0.15);
+            transform: scale(1.02);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 180px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.9);
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .card-image::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.15);
+            z-index: 1;
+        }
+
+        .card-image-icon {
+            font-size: 36px;
+            margin-bottom: 6px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-image-label {
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            padding: 0 8px;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-body {
+            padding: 14px 16px;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .card-meta {
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .badge-nature {
+            background: rgba(74, 222, 128, 0.13);
+            color: #4ade80;
+        }
+
+        .badge-luxury {
+            background: rgba(240, 214, 138, 0.13);
+            color: #f0d68a;
+        }
+
+        .badge-animals {
+            background: rgba(96, 165, 250, 0.13);
+            color: #60a5fa;
+        }
+
+        /* Create flow */
+        .steps-indicator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-circle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .step-circle.active {
+            background: linear-gradient(135deg, #c9a040, #f0d68a);
+            color: #0a0a1a;
+            border: none;
+        }
+
+        .step-label {
+            font-size: 14px;
+            font-weight: 400;
+            color: #666;
+        }
+
+        .step-label.active {
+            font-weight: 600;
+            color: #f0d68a;
+        }
+
+        .step-divider {
+            color: #333;
+            margin: 0 4px;
+        }
+
+        .section-content {
+            font-size: 22px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .section-desc {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .clips-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        .clip-card {
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.2s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .clip-card.added {
+            border: 2px solid #f0d68a;
+            opacity: 0.5;
+        }
+
+        .clip-card-check {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #f0d68a;
+            color: #0a0a1a;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            z-index: 5;
+        }
+
+        .clip-card-label {
+            padding: 6px 10px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #ccc;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2;
+        }
+
+        .timeline-section {
+            margin-top: 24px;
+            padding: 20px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .timeline-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .timeline-info {
+            color: #666;
+            font-weight: 400;
+        }
+
+        .btn-secondary {
+            padding: 6px 14px;
+            border-radius: 8px;
+            background: rgba(255, 80, 80, 0.1);
+            color: #ff6666;
+            font-size: 12px;
+            border: 1px solid rgba(255, 80, 80, 0.2);
+            cursor: pointer;
+        }
+
+        .timeline-container {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 12px 0;
+            min-height: 100px;
+            align-items: center;
+        }
+
+        .timeline-empty {
+            color: #444;
+            font-size: 14px;
+            padding: 20px 0;
+            width: 100%;
+            text-align: center;
+        }
+
+        .timeline-clip {
+            min-width: 130px;
+            height: 85px;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0;
+            border: 2px solid rgba(201, 160, 64, 0.3);
+        }
+
+        .timeline-clip-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 4px 8px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            font-size: 10px;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .timeline-clip-duration {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.7);
+            font-size: 9px;
+            color: #f0d68a;
+            font-weight: 600;
+            z-index: 3;
+        }
+
+        .timeline-clip-remove {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: rgba(255, 50, 50, 0.8);
+            color: #fff;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            line-height: 1;
+            z-index: 4;
+        }
+
+        .timeline-add {
+            min-width: 100px;
+            height: 85px;
+            border-radius: 10px;
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            font-size: 28px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+            gap: 12px;
+        }
+
+        .btn-back {
+            padding: 12px 24px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #e0e0e0;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        .btn-next {
+            padding: 14px 36px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #c9a040, #f0d68a);
+            color: #0a0a1a;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 24px rgba(201, 160, 64, 0.3);
+        }
+
+        .btn-next.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Customize view */
+        .customize-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 24px;
+        }
+
+        .customize-left {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .customize-sidebar {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 80px;
+        }
+
+        .section-box {
+            padding: 20px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .section-box-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 14px;
+        }
+
+        .music-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        .music-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .music-item.selected {
+            background: rgba(201, 160, 64, 0.1);
+            border: 1px solid rgba(201, 160, 64, 0.2);
+        }
+
+        .music-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(201, 160, 64, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #f0d68a;
+            flex-shrink: 0;
+        }
+
+        .music-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .music-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .music-artist {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .music-meta {
+            font-size: 11px;
+            color: #555;
+            flex-shrink: 0;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            accent-color: #c9a040;
+            cursor: pointer;
+        }
+
+        .content-options {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .content-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .content-item.selected {
+            background: rgba(201, 160, 64, 0.1);
+            border: 1px solid rgba(201, 160, 64, 0.25);
+        }
+
+        .content-icon {
+            font-size: 22px;
+            width: 36px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .content-text {
+            flex: 1;
+        }
+
+        .content-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .content-desc {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .frequency-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 14px;
+        }
+
+        .btn-frequency {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.03);
+            color: #666;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-frequency.active {
+            background: rgba(130, 90, 255, 0.15);
+            color: #b090ff;
+            border: 1px solid rgba(130, 90, 255, 0.25);
+        }
+
+        .duration-grid {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btn-duration {
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.03);
+            color: #888;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .btn-duration.active {
+            background: rgba(201, 160, 64, 0.2);
+            color: #f0d68a;
+            border: 1px solid rgba(201, 160, 64, 0.3);
+        }
+
+        .section-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .summary-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 13px;
+        }
+
+        .summary-label {
+            color: #666;
+        }
+
+        .summary-value {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .btn-preview {
+            padding: 12px 24px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #c9a040, #f0d68a);
+            color: #0a0a1a;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 4px 20px rgba(201, 160, 64, 0.2);
+        }
+
+        .btn-full {
+            width: 100%;
+            padding: 10px 20px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #e0e0e0;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        /* Preview */
+        .preview-container {
+            text-align: center;
+        }
+
+        .preview-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .preview-description {
+            color: #666;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .preview-video {
+            max-width: 900px;
+            margin: 0 auto;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            aspect-ratio: 16 / 9;
+            border: 1px solid rgba(201, 160, 64, 0.15);
+        }
+
+        .preview-video-content {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            inset: 0;
+            transition: background 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+        }
+
+        .preview-overlay {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .preview-overlay-badge {
+            padding: 4px 12px;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            font-size: 12px;
+            color: #f0d68a;
+            font-weight: 500;
+            width: fit-content;
+        }
+
+        .preview-overlay-title {
+            padding: 6px 14px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            width: fit-content;
+        }
+
+        .preview-top-left {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            font-size: 13px;
+            font-weight: 600;
+            color: #f0d68a;
+        }
+
+        .preview-top-right {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .preview-top-right span {
+            font-size: 14px;
+        }
+
+        .preview-top-right-text {
+            font-size: 12px;
+            color: #fff;
+        }
+
+        .playback-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            max-width: 900px;
+            margin: 16px auto 0;
+            padding: 12px 24px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            justify-content: center;
+        }
+
+        .play-button {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #c9a040, #f0d68a);
+            color: #0a0a1a;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .time-display {
+            font-size: 13px;
+            color: #888;
+            min-width: 50px;
+        }
+
+        .progress-bar-container {
+            flex: 1;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            position: relative;
+            max-width: 500px;
+            cursor: pointer;
+        }
+
+        .progress-bar-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            border-radius: 2px;
+            background: linear-gradient(90deg, #c9a040, #f0d68a);
+            transition: width 0.1s;
+        }
+
+        .preview-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 28px;
+        }
+
+        .btn-save {
+            padding: 14px 32px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #c9a040, #f0d68a);
+            color: #0a0a1a;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 24px rgba(201, 160, 64, 0.3);
+        }
+
+        .btn-edit {
+            padding: 14px 24px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #e0e0e0;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        /* Library */
+        .library-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .library-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .library-desc {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .library-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .experience-card {
+            border-radius: 14px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+        }
+
+        .experience-card-header {
+            position: relative;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .experience-card-heart {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 18px;
+        }
+
+        .experience-card-body {
+            padding: 14px 16px;
+        }
+
+        .experience-card-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .experience-info {
+            flex: 1;
+        }
+
+        .experience-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .experience-meta {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .experience-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-action {
+            padding: 6px 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.04);
+            color: #888;
+            font-size: 13px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+        }
+
+        /* Live */
+        .live-header {
+            margin-bottom: 20px;
+        }
+
+        .live-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .live-desc {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .live-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .live-card {
+            border-radius: 14px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+        }
+
+        .live-card-image {
+            position: relative;
+            height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .live-badge-top-left {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            background: rgba(255, 50, 50, 0.15);
+            color: #ff4444;
+        }
+
+        .live-badge-top-right {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            background: rgba(255, 255, 255, 0.13);
+            color: #fff;
+        }
+
+        .live-card-footer {
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .live-type-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .live-type-artist {
+            background: rgba(240, 214, 138, 0.13);
+            color: #f0d68a;
+        }
+
+        .live-type-nature {
+            background: rgba(74, 222, 128, 0.13);
+            color: #4ade80;
+        }
+
+        .live-type-city {
+            background: rgba(96, 165, 250, 0.13);
+            color: #60a5fa;
+        }
+
+        .btn-join {
+            padding: 8px 20px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #c9a040, #f0d68a);
+            color: #0a0a1a;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #151520;
+            border-radius: 20px;
+            padding: 32px;
+            width: 420px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+        }
+
+        .modal-checkbox-label {
+            font-size: 13px;
+            color: #888;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-btn-save {
+            flex: 1;
+            padding: 12px 24px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #c9a040, #f0d68a);
+            color: #0a0a1a;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        .modal-btn-cancel {
+            flex: 1;
+            padding: 10px 20px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #e0e0e0;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        .modal-success {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .modal-success-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .modal-success-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .modal-success-desc {
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        select {
+            accent-color: #c9a040;
+        }
+
+        .card-absolute-top-left {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            background: rgba(240, 214, 138, 0.13);
+            color: #f0d68a;
+        }
+
+        .live-card-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 24px 16px 16px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+        }
+
+        .live-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .live-card-name {
+            font-size: 13px;
+            color: #aaa;
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-brand" onclick="goHome()">
+            <div class="nav-logo">D</div>
+            <span class="nav-title">Dayholi Vision</span>
+        </div>
+        <div class="nav-buttons">
+            <button class="nav-btn" id="nav-home" onclick="setScreen('home')">Explore</button>
+            <button class="nav-btn" id="nav-create" onclick="setScreen('create')">Create</button>
+            <button class="nav-btn" id="nav-library" onclick="setScreen('library')">My Library</button>
+            <button class="nav-btn live" id="nav-live" onclick="setScreen('live')">Live</button>
+        </div>
+        <div class="nav-right">
+            <button class="nav-icon-btn">🔔</button>
+            <div class="nav-avatar">E</div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id="home-page" class="page fade-in"></div>
+        <div id="create-page" class="page fade-in"></div>
+        <div id="library-page" class="page fade-in"></div>
+        <div id="live-page" class="page fade-in"></div>
+    </div>
+
+    <div id="save-modal" class="modal-overlay" style="display: none;" onclick="if(event.target === this) closeSaveModal()">
+        <div class="modal-content slide-up">
+            <div id="modal-success" style="display: none;">
+                <div class="modal-success">
+                    <div class="modal-success-icon">✅</div>
+                    <div class="modal-success-title">Saved!</div>
+                    <div class="modal-success-desc">Your experience is now in your library</div>
+                </div>
+            </div>
+            <div id="modal-form">
+                <div class="modal-title">Save Experience</div>
+                <input type="text" class="modal-input" id="save-name" placeholder="Experience name..." autofocus>
+                <label class="modal-checkbox-label">
+                    <input type="checkbox" style="accent-color: #c9a040;"> Add to Favorites
+                </label>
+                <div class="modal-buttons">
+                    <button class="modal-btn-save" onclick="saveExperience()">Save</button>
+                    <button class="modal-btn-cancel" onclick="closeSaveModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const GRADIENTS = {
+            nyc: "linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #e94560 100%)",
+            maldives: "linear-gradient(135deg, #0077b6 0%, #00b4d8 40%, #90e0ef 100%)",
+            paris: "linear-gradient(135deg, #2d1b69 0%, #8b5cf6 50%, #f0abfc 100%)",
+            mykonos: "linear-gradient(135deg, #0369a1 0%, #38bdf8 50%, #ffffff 100%)",
+            bali: "linear-gradient(135deg, #065f46 0%, #10b981 50%, #fbbf24 100%)",
+            dubai: "linear-gradient(135deg, #78350f 0%, #f59e0b 50%, #fef3c7 100%)",
+            iceland: "linear-gradient(135deg, #1e3a5f 0%, #67e8f9 50%, #e0f2fe 100%)",
+            safari: "linear-gradient(135deg, #713f12 0%, #ca8a04 50%, #fef08a 100%)",
+        };
+
+        const CLIP_GRADIENTS = {
+            "nyc-1": "linear-gradient(135deg, #e94560, #1a1a2e)", "nyc-2": "linear-gradient(135deg, #22c55e, #064e3b)",
+            "nyc-3": "linear-gradient(135deg, #6366f1, #1e1b4b)", "nyc-4": "linear-gradient(135deg, #f97316, #1a1a2e)",
+            "nyc-5": "linear-gradient(135deg, #ec4899, #581c87)",
+            "mal-1": "linear-gradient(135deg, #06b6d4, #0e7490)", "mal-2": "linear-gradient(135deg, #0ea5e9, #075985)",
+            "mal-3": "linear-gradient(135deg, #14b8a6, #134e4a)", "mal-4": "linear-gradient(135deg, #f97316, #0077b6)",
+            "mal-5": "linear-gradient(135deg, #1e1b4b, #6366f1)",
+            "par-1": "linear-gradient(135deg, #f0abfc, #2d1b69)", "par-2": "linear-gradient(135deg, #60a5fa, #1e3a8a)",
+            "par-3": "linear-gradient(135deg, #fbbf24, #78350f)", "par-4": "linear-gradient(135deg, #a78bfa, #1e1b4b)",
+            "par-5": "linear-gradient(135deg, #34d399, #065f46)",
+            "myk-1": "linear-gradient(135deg, #ffffff, #0369a1)", "myk-2": "linear-gradient(135deg, #0ea5e9, #0c4a6e)",
+            "myk-3": "linear-gradient(135deg, #f97316, #38bdf8)", "myk-4": "linear-gradient(135deg, #6366f1, #0369a1)",
+            "myk-5": "linear-gradient(135deg, #e0f2fe, #0284c7)",
+            "bal-1": "linear-gradient(135deg, #22c55e, #065f46)", "bal-2": "linear-gradient(135deg, #fbbf24, #92400e)",
+            "bal-3": "linear-gradient(135deg, #06b6d4, #065f46)", "bal-4": "linear-gradient(135deg, #f97316, #10b981)",
+            "bal-5": "linear-gradient(135deg, #713f12, #22c55e)",
+            "dub-1": "linear-gradient(135deg, #fbbf24, #78350f)", "dub-2": "linear-gradient(135deg, #fef3c7, #92400e)",
+            "dub-3": "linear-gradient(135deg, #1e1b4b, #f59e0b)", "dub-4": "linear-gradient(135deg, #0ea5e9, #f59e0b)",
+            "dub-5": "linear-gradient(135deg, #f59e0b, #451a03)",
+            "ice-1": "linear-gradient(135deg, #22d3ee, #1e3a5f)", "ice-2": "linear-gradient(135deg, #60a5fa, #e0f2fe)",
+            "ice-3": "linear-gradient(135deg, #e2e8f0, #1e3a5f)", "ice-4": "linear-gradient(135deg, #1e293b, #67e8f9)",
+            "ice-5": "linear-gradient(135deg, #06b6d4, #f0f9ff)",
+            "saf-1": "linear-gradient(135deg, #ca8a04, #451a03)", "saf-2": "linear-gradient(135deg, #78716c, #ca8a04)",
+            "saf-3": "linear-gradient(135deg, #f97316, #713f12)", "saf-4": "linear-gradient(135deg, #fbbf24, #365314)",
+            "saf-5": "linear-gradient(135deg, #1c1917, #ca8a04)",
+        };
+
+        const LIVE_GRADIENTS = {
+            l1: "linear-gradient(135deg, #7c3aed, #ec4899)",
+            l2: "linear-gradient(135deg, #06b6d4, #0e7490)",
+            l3: "linear-gradient(135deg, #dc2626, #1e1b4b)",
+            l4: "linear-gradient(135deg, #8b5cf6, #c084fc)",
+            l5: "linear-gradient(135deg, #22d3ee, #1e3a5f)",
+            l6: "linear-gradient(135deg, #f97316, #1a1a2e)",
+        };
+
+        const LOCATIONS = [
+            { id: "nyc", name: "New York City", category: ["luxury", "nature"], clips: 5, icon: "🏙️" },
+            { id: "maldives", name: "Maldives", category: ["nature", "luxury"], clips: 5, icon: "🏝️" },
+            { id: "paris", name: "Paris", category: ["luxury"], clips: 5, icon: "🗼" },
+            { id: "mykonos", name: "Mykonos", category: ["nature", "luxury"], clips: 5, icon: "🏛️" },
+            { id: "bali", name: "Bali", category: ["nature", "animals"], clips: 5, icon: "🌴" },
+            { id: "dubai", name: "Dubai", category: ["luxury"], clips: 5, icon: "🌇" },
+            { id: "iceland", name: "Iceland", category: ["nature"], clips: 5, icon: "🧊" },
+            { id: "safari", name: "Kenya Safari", category: ["nature", "animals"], clips: 5, icon: "🦁" },
+        ];
+
+        const CLIPS_DATA = {
+            nyc: [
+                { id: "nyc-1", name: "Times Square Night", duration: 10, icon: "🌃" },
+                { id: "nyc-2", name: "Central Park Sunrise", duration: 10, icon: "🌿" },
+                { id: "nyc-3", name: "Brooklyn Bridge", duration: 10, icon: "🌉" },
+                { id: "nyc-4", name: "Manhattan Skyline", duration: 10, icon: "🏙️" },
+                { id: "nyc-5", name: "Hudson River Sunset", duration: 10, icon: "🌅" },
+            ],
+            maldives: [
+                { id: "mal-1", name: "Crystal Lagoon", duration: 10, icon: "💎" },
+                { id: "mal-2", name: "Overwater Villa", duration: 10, icon: "🏠" },
+                { id: "mal-3", name: "Coral Reef", duration: 10, icon: "🐠" },
+                { id: "mal-4", name: "Sunset Beach", duration: 10, icon: "🌅" },
+                { id: "mal-5", name: "Starry Night", duration: 10, icon: "✨" },
+            ],
+            paris: [
+                { id: "par-1", name: "Eiffel Tower Dawn", duration: 10, icon: "🗼" },
+                { id: "par-2", name: "Seine River", duration: 10, icon: "🚣" },
+                { id: "par-3", name: "Montmartre Streets", duration: 10, icon: "🎨" },
+                { id: "par-4", name: "Louvre at Night", duration: 10, icon: "🖼️" },
+                { id: "par-5", name: "Garden Bloom", duration: 10, icon: "🌸" },
+            ],
+            mykonos: [
+                { id: "myk-1", name: "White Houses", duration: 10, icon: "🏘️" },
+                { id: "myk-2", name: "Blue Ocean", duration: 10, icon: "🌊" },
+                { id: "myk-3", name: "Windmills Sunset", duration: 10, icon: "🌅" },
+                { id: "myk-4", name: "Harbor View", duration: 10, icon: "⛵" },
+                { id: "myk-5", name: "Cliffside Path", duration: 10, icon: "🏖️" },
+            ],
+            bali: [
+                { id: "bal-1", name: "Rice Terraces", duration: 10, icon: "🌾" },
+                { id: "bal-2", name: "Temple Gate", duration: 10, icon: "⛩️" },
+                { id: "bal-3", name: "Jungle Waterfall", duration: 10, icon: "🌊" },
+                { id: "bal-4", name: "Beach Sunset", duration: 10, icon: "🌅" },
+                { id: "bal-5", name: "Monkey Forest", duration: 10, icon: "🐒" },
+            ],
+            dubai: [
+                { id: "dub-1", name: "Burj Khalifa", duration: 10, icon: "🏗️" },
+                { id: "dub-2", name: "Desert Dunes", duration: 10, icon: "🏜️" },
+                { id: "dub-3", name: "Marina Night", duration: 10, icon: "🌃" },
+                { id: "dub-4", name: "Palm Island", duration: 10, icon: "🌴" },
+                { id: "dub-5", name: "Gold Souk", duration: 10, icon: "✨" },
+            ],
+            iceland: [
+                { id: "ice-1", name: "Northern Lights", duration: 10, icon: "🌌" },
+                { id: "ice-2", name: "Blue Lagoon", duration: 10, icon: "♨️" },
+                { id: "ice-3", name: "Glacier Walk", duration: 10, icon: "🏔️" },
+                { id: "ice-4", name: "Volcanic Beach", duration: 10, icon: "🖤" },
+                { id: "ice-5", name: "Waterfall Mist", duration: 10, icon: "💨" },
+            ],
+            safari: [
+                { id: "saf-1", name: "Lion Pride", duration: 10, icon: "🦁" },
+                { id: "saf-2", name: "Elephant March", duration: 10, icon: "🐘" },
+                { id: "saf-3", name: "Savanna Sunset", duration: 10, icon: "🌅" },
+                { id: "saf-4", name: "Giraffe Crossing", duration: 10, icon: "🦒" },
+                { id: "saf-5", name: "Night Safari", duration: 10, icon: "🌙" },
+            ],
+        };
+
+        const MUSIC_TRACKS = [
+            { id: "m1", name: "Ambient Dreams", artist: "Solaris", genre: "Ambient", duration: "3:42", bpm: 72 },
+            { id: "m2", name: "Ocean Waves", artist: "NatureSound", genre: "Nature", duration: "5:10", bpm: 60 },
+            { id: "m3", name: "Ethereal Piano", artist: "Luna Keys", genre: "Classical", duration: "4:28", bpm: 80 },
+            { id: "m4", name: "Zen Garden", artist: "Koto Master", genre: "World", duration: "6:15", bpm: 65 },
+            { id: "m5", name: "Deep Space", artist: "Cosmos", genre: "Electronic", duration: "4:55", bpm: 90 },
+            { id: "m6", name: "Forest Rain", artist: "EarthTones", genre: "Nature", duration: "7:30", bpm: 55 },
+            { id: "m7", name: "Sacred Chants", artist: "Dharma Collective", genre: "Spiritual", duration: "8:00", bpm: 50 },
+            { id: "m8", name: "Midnight Jazz", artist: "Blue Note", genre: "Jazz", duration: "5:45", bpm: 95 },
+        ];
+
+        const CONTENT_TYPES = [
+            { id: "meditation", name: "Guided Meditation", icon: "🧘", desc: "Calming guided meditation voiceover" },
+            { id: "frequency", name: "High Frequency", icon: "〰️", desc: "Healing frequencies (432Hz, 528Hz, 741Hz)" },
+            { id: "travel", name: "Travel Info", icon: "✈️", desc: "AI-generated travel facts & cultural insights" },
+            { id: "spiritual", name: "Spiritual", icon: "✨", desc: "Spiritual teachings & mindfulness guidance" },
+            { id: "none", name: "No Overlay", icon: "🔇", desc: "Just the scenes and music" },
+        ];
+
+        const FREQUENCIES = ["174 Hz", "285 Hz", "396 Hz", "417 Hz", "432 Hz", "528 Hz", "639 Hz", "741 Hz", "852 Hz", "963 Hz"];
+        const LANGUAGES = ["English", "Spanish", "French", "German", "Japanese", "Arabic", "Hindi", "Mandarin", "Portuguese", "Italian"];
+        const DURATIONS = [1, 5, 7, 10, 15, 30, 60];
+
+        const LIVE_STREAMS = [
+            { id: "l1", type: "artist", name: "DJ Aurora", title: "Sunset Ambient Set", viewers: 1243, icon: "🎧" },
+            { id: "l2", type: "nature", name: "Maldives Reef Cam", title: "24/7 Underwater", viewers: 892, icon: "🐠" },
+            { id: "l3", type: "city", name: "Tokyo Night", title: "Shibuya Crossing", viewers: 2105, icon: "🏙️" },
+            { id: "l4", type: "artist", name: "Healing Sounds", title: "Crystal Bowl Session", viewers: 567, icon: "🔮" },
+            { id: "l5", type: "nature", name: "Aurora Borealis", title: "Live from Iceland", viewers: 3401, icon: "🌌" },
+            { id: "l6", type: "city", name: "NYC Rooftop", title: "Manhattan Skyline", viewers: 1890, icon: "🌃" },
+        ];
+
+        const SAVED_EXPERIENCES = [
+            { id: "s1", name: "Morning Zen", clips: 6, duration: "10 min", gradient: GRADIENTS.bali, icon: "🧘", date: "Mar 24" },
+            { id: "s2", name: "Night City Vibes", clips: 4, duration: "5 min", gradient: GRADIENTS.nyc, icon: "🌃", date: "Mar 22" },
+            { id: "s3", name: "Ocean Healing", clips: 8, duration: "15 min", gradient: GRADIENTS.maldives, icon: "🌊", date: "Mar 20", fav: true },
+        ];
+
+        const state = {
+            screen: "home",
+            createStep: 0,
+            categoryFilter: "all",
+            selectedLocation: null,
+            timelineClips: [],
+            selectedMusic: null,
+            selectedContent: "none",
+            selectedFreq: "528 Hz",
+            selectedLang: "English",
+            selectedDuration: 10,
+            musicVolume: 70,
+            contentVolume: 50,
+            previewPlaying: false,
+            previewProgress: 0,
+            previewClipIdx: 0,
+            showSaveModal: false,
+            saveName: "",
+            liveFilter: "all",
+            musicGenreFilter: "all",
+            addedFlash: null,
+        };
+
+        let previewTimer = null;
+
+        function createPlaceholder(gradient, label, icon, small) {
+            const div = document.createElement('div');
+            div.style.cssText = `background: ${gradient}; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.9); position: relative; overflow: hidden; width: 100%; height: 100%;`;
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position: absolute; inset: 0; background: rgba(0,0,0,0.15); z-index: 0;';
+            div.appendChild(overlay);
+            if (icon) {
+                const iconEl = document.createElement('div');
+                iconEl.textContent = icon;
+                iconEl.style.cssText = `font-size: ${small ? '24px' : '36px'}; margin-bottom: ${small ? '2px' : '6px'}; position: relative; z-index: 1;`;
+                div.appendChild(iconEl);
+            }
+            if (label) {
+                const labelEl = document.createElement('div');
+                labelEl.textContent = label;
+                labelEl.style.cssText = `font-size: ${small ? '10px' : '13px'}; font-weight: 600; text-align: center; padding: 0 8px; position: relative; z-index: 1; text-shadow: 0 1px 4px rgba(0,0,0,0.5);`;
+                div.appendChild(labelEl);
+            }
+            return div;
+        }
+
+        function setScreen(s) { state.screen = s; if (s === 'create') state.createStep = 0; updateNav(); render(); }
+        function goHome() { state.screen = 'home'; state.createStep = 0; updateNav(); render(); }
+        function updateNav() {
+            ['nav-home', 'nav-create', 'nav-library', 'nav-live'].forEach(id => document.getElementById(id).classList.remove('active'));
+            const navMap = { home: 'nav-home', create: 'nav-create', library: 'nav-library', live: 'nav-live' };
+            if (navMap[state.screen]) document.getElementById(navMap[state.screen]).classList.add('active');
+        }
+        function getTotalTime() { return state.timelineClips.reduce((a, c) => a + c.duration, 0); }
+        function getLocations() { return LOCATIONS.filter(l => state.categoryFilter === 'all' || l.category.includes(state.categoryFilter)); }
+        function getLive() { return LIVE_STREAMS.filter(l => state.liveFilter === 'all' || l.type === state.liveFilter); }
+        function getMusic() { return MUSIC_TRACKS.filter(m => state.musicGenreFilter === 'all' || m.genre === state.musicGenreFilter); }
+        function getGenres() { return ['all', ...new Set(MUSIC_TRACKS.map(m => m.genre))]; }
+        function addClip(clip) {
+            if (!state.timelineClips.find(c => c.id === clip.id)) {
+                state.timelineClips.push(clip);
+                state.addedFlash = clip.id;
+                setTimeout(() => { state.addedFlash = null; render(); }, 600);
+                render();
+            }
+        }
+        function removeClip(id) { state.timelineClips = state.timelineClips.filter(c => c.id !== id); render(); }
+        function clearTimeline() { state.timelineClips = []; render(); }
+        function selectLoc(id) { state.selectedLocation = id; render(); }
+        function nextStep() { if (state.createStep === 0 && state.timelineClips.length === 0) return; state.createStep++; render(); }
+        function prevStep() { if (state.createStep > 0) { state.createStep--; if (previewTimer) clearInterval(previewTimer); state.previewPlaying = false; } render(); }
+        function startPreview() { state.previewPlaying = true; state.previewProgress = 0; state.previewClipIdx = 0; runPreview(); }
+        function togglePlay() { if (!state.previewPlaying) { state.previewPlaying = true; if (state.previewProgress >= 100) state.previewProgress = 0; runPreview(); } else { state.previewPlaying = false; if (previewTimer) clearInterval(previewTimer); } updatePreviewUI(); }
+        function updatePreviewUI() {
+            // Lightweight update — only touches the elements that change, no full re-render
+            const progBar = document.getElementById('prog-bar');
+            const currTime = document.getElementById('curr-time');
+            const playIcon = document.getElementById('play-icon');
+            const prevContent = document.getElementById('prev-content');
+            const prevClip = document.getElementById('prev-clip');
+            if (!progBar) return;
+            progBar.style.width = state.previewProgress + '%';
+            const ct = Math.floor(state.previewProgress / 100 * state.selectedDuration * 60);
+            currTime.textContent = '0:' + String(ct).padStart(2, '0');
+            playIcon.textContent = state.previewPlaying ? '⏸' : '▶';
+            if (state.timelineClips.length > 0 && prevContent) {
+                const clip = state.timelineClips[state.previewClipIdx % state.timelineClips.length];
+                prevContent.style.background = CLIP_GRADIENTS[clip.id];
+                prevContent.textContent = clip.icon;
+                if (prevClip) prevClip.textContent = clip.name;
+            }
+        }
+        function runPreview() {
+            if (previewTimer) clearInterval(previewTimer);
+            previewTimer = setInterval(() => {
+                state.previewProgress += 0.3;
+                if (state.previewProgress >= 100) { state.previewPlaying = false; clearInterval(previewTimer); updatePreviewUI(); return; }
+                if (state.timelineClips.length > 0) {
+                    const seg = 100 / state.timelineClips.length;
+                    state.previewClipIdx = Math.min(Math.floor(state.previewProgress / seg), state.timelineClips.length - 1);
+                }
+                updatePreviewUI();
+            }, 100);
+        }
+        function seekPrev(e) { const rect = e.currentTarget.getBoundingClientRect(); state.previewProgress = Math.max(0, Math.min(100, (e.clientX - rect.left) / rect.width * 100)); if (state.timelineClips.length > 0) { const seg = 100 / state.timelineClips.length; state.previewClipIdx = Math.min(Math.floor(state.previewProgress / seg), state.timelineClips.length - 1); } updatePreviewUI(); }
+        function showSaveModal() { state.showSaveModal = true; state.saveName = ''; render(); setTimeout(() => { const inp = document.getElementById('save-name'); if (inp) inp.focus(); }, 100); }
+        function closeSaveModal() { state.showSaveModal = false; state.saveName = ''; render(); }
+        function saveExperience() { if (state.saveName.trim() === '') return; document.getElementById('modal-form').style.display = 'none'; document.getElementById('modal-success').style.display = 'block'; setTimeout(() => { state.showSaveModal = false; state.screen = 'library'; updateNav(); state.createStep = 0; render(); }, 1500); }
+
+        function render() {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const pageMap = { home: 'home-page', create: 'create-page', library: 'library-page', live: 'live-page' };
+            const page = document.getElementById(pageMap[state.screen]);
+            if (page) page.classList.add('active');
+            if (state.screen === 'home') renderHome();
+            if (state.screen === 'create') renderCreate();
+            if (state.screen === 'library') renderLibrary();
+            if (state.screen === 'live') renderLive();
+            const modal = document.getElementById('save-modal');
+            if (state.showSaveModal) { modal.style.display = 'flex'; document.getElementById('modal-form').style.display = 'block'; document.getElementById('modal-success').style.display = 'none'; document.getElementById('save-name').value = state.saveName; } else { modal.style.display = 'none'; }
+        }
+
+        function renderHome() {
+            const home = document.getElementById('home-page');
+            home.innerHTML = `
+                <div class="hero">
+                    <div class="hero-title">Create Your Own<br/>Immersive Experience</div>
+                    <div class="hero-desc">Craft personalized 360° journeys from our premium VR library. Mix stunning locations, ambient music, and wellness content.</div>
+                    <button class="btn-primary" onclick="setScreen('create')">+ Create New Experience</button>
+                    <div class="hero-stats">
+                        <div class="stat"><div class="stat-number">100+</div><div class="stat-label">360° 8K Videos</div></div>
+                        <div class="stat"><div class="stat-number">8</div><div class="stat-label">Destinations</div></div>
+                        <div class="stat"><div class="stat-number">40+</div><div class="stat-label">Clips</div></div>
+                        <div class="stat"><div class="stat-number">24/7</div><div class="stat-label">Live Streams</div></div>
+                    </div>
+                </div>
+                <div class="section-header">
+                    <div class="section-title">Popular Destinations</div>
+                    <div class="filter-group" id="home-filters"></div>
+                </div>
+                <div class="grid grid-4" id="home-locs"></div>
+                <div style="margin-top: 48px;">
+                    <div class="section-header">
+                        <div class="section-title">🔴 Live Now</div>
+                        <button class="btn-filter" onclick="setScreen('live')" style="border: none; background: transparent; color: #f0d68a; padding: 0;">View all →</button>
+                    </div>
+                    <div class="grid grid-3" id="home-live"></div>
+                </div>
+            `;
+            const fc = document.getElementById('home-filters');
+            ['all','nature','luxury','animals'].forEach(f => {
+                const b = document.createElement('button');
+                b.className = 'btn-filter' + (state.categoryFilter === f ? ' active' : '');
+                b.textContent = f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1);
+                b.onclick = () => { state.categoryFilter = f; render(); };
+                fc.appendChild(b);
+            });
+            const lc = document.getElementById('home-locs');
+            getLocations().forEach(loc => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.onclick = () => { state.selectedLocation = loc.id; setScreen('create'); };
+                card.innerHTML = `<div style="width: 100%; height: 180px;"></div><div class="card-body"><div class="card-title">${loc.name}</div><div class="card-meta">${loc.clips} clips · ${loc.category.map(c => `<span class="badge badge-${c}">${c}</span>`).join('')}</div></div>`;
+                card.children[0].appendChild(createPlaceholder(GRADIENTS[loc.id], loc.name, loc.icon));
+                lc.appendChild(card);
+            });
+            const hlive = document.getElementById('home-live');
+            LIVE_STREAMS.slice(0, 3).forEach(s => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `<div style="position: relative; height: 180px;"><div style="width: 100%; height: 100%;"></div><div class="live-badge-top-left"><span class="live-indicator"></span> LIVE</div><div style="position: absolute; bottom: 10px; right: 10px; padding: 3px 10px; border-radius: 20px; font-size: 11px; background: rgba(255, 255, 255, 0.13); color: #fff;">${s.viewers.toLocaleString()} watching</div></div><div class="card-body"><div class="card-title">${s.title}</div><div class="card-meta">${s.name} · ${s.type}</div></div>`;
+                card.children[0].children[0].appendChild(createPlaceholder(LIVE_GRADIENTS[s.id], s.title, s.icon));
+                hlive.appendChild(card);
+            });
+        }
+
+        function renderCreate() {
+            const page = document.getElementById('create-page');
+            const ind = document.createElement('div');
+            ind.className = 'steps-indicator';
+            ['Select Scenes','Customize','Preview & Save'].forEach((l, i) => {
+                const si = document.createElement('div');
+                si.className = 'step-item';
+                const circ = document.createElement('div');
+                circ.className = 'step-circle' + (state.createStep >= i ? ' active' : '');
+                circ.textContent = i + 1;
+                si.appendChild(circ);
+                const lbl = document.createElement('span');
+                lbl.className = 'step-label' + (state.createStep === i ? ' active' : '');
+                lbl.textContent = l;
+                si.appendChild(lbl);
+                if (i < 2) { const div = document.createElement('span'); div.className = 'step-divider'; div.textContent = '—'; si.appendChild(div); }
+                ind.appendChild(si);
+            });
+            page.innerHTML = '';
+            page.appendChild(ind);
+
+            const step0 = document.createElement('div');
+            step0.id = 'step0';
+            step0.style.display = state.createStep === 0 ? 'block' : 'none';
+            step0.className = 'slide-up';
+            step0.innerHTML = `
+                <div class="section-content">Choose Your Destinations</div>
+                <p class="section-desc">Click a location to see its 360° clips, then add clips to your timeline.</p>
+                <div class="filter-group" id="create-filters"></div>
+                <div class="grid grid-4" id="create-locs"></div>
+                <div id="clips-container" style="display: none;"></div>
+                <div class="timeline-section">
+                    <div class="timeline-header">
+                        <div class="timeline-title">🎬 Timeline <span class="timeline-info" id="tl-info">(0 clips · 0s)</span></div>
+                        <button class="btn-secondary" id="clear-btn" onclick="clearTimeline()" style="display: none;">Clear All</button>
+                    </div>
+                    <div class="timeline-container" id="tl-container"><div class="timeline-empty">Select a destination above and click clips to build your timeline</div></div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-back" onclick="goHome()">← Back</button>
+                    <button class="btn-next" id="next-btn" onclick="nextStep()" style="opacity: 0.4; cursor: not-allowed;">Next: Customize →</button>
+                </div>
+            `;
+            page.appendChild(step0);
+
+            const cf = document.getElementById('create-filters');
+            ['all','nature','luxury','animals'].forEach(f => {
+                const b = document.createElement('button');
+                b.className = 'btn-filter' + (state.categoryFilter === f ? ' active' : '');
+                b.textContent = f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1);
+                b.onclick = () => { state.categoryFilter = f; render(); };
+                cf.appendChild(b);
+            });
+
+            const cl = document.getElementById('create-locs');
+            getLocations().forEach(loc => {
+                const card = document.createElement('div');
+                card.className = 'card' + (state.selectedLocation === loc.id ? ' selected' : '');
+                card.onclick = () => selectLoc(loc.id);
+                card.innerHTML = `<div style="width: 100%; height: 160px;"></div><div class="card-body"><div class="card-title" style="${state.selectedLocation === loc.id ? 'color: #f0d68a;' : ''}">${loc.name}</div><div class="card-meta">${loc.clips} clips available</div></div>`;
+                card.children[0].appendChild(createPlaceholder(GRADIENTS[loc.id], loc.name, loc.icon));
+                cl.appendChild(card);
+            });
+
+            if (state.selectedLocation) {
+                const cc = document.getElementById('clips-container');
+                cc.style.display = 'block';
+                cc.className = 'slide-up';
+                const loc = LOCATIONS.find(l => l.id === state.selectedLocation);
+                cc.innerHTML = `
+                    <div style="font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 4px;"><span>${loc.icon}</span> <span>${loc.name}</span> — Clips</div>
+                    <p style="color: #888; margin-bottom: 16px; font-size: 13px;">Click a clip to add it to your timeline below</p>
+                    <div class="clips-grid" id="clips-grid"></div>
+                `;
+                const cg = document.getElementById('clips-grid');
+                (CLIPS_DATA[state.selectedLocation] || []).forEach(clip => {
+                    const inTl = state.timelineClips.find(c => c.id === clip.id);
+                    const card = document.createElement('div');
+                    card.className = 'clip-card' + (state.addedFlash === clip.id ? ' flash-add' : '') + (inTl ? ' added' : '');
+                    if (!inTl) { card.style.cursor = 'pointer'; card.onclick = () => addClip(clip); }
+                    card.innerHTML = `<div style="width: 100%; height: 100px;"></div>${inTl ? '<div class="clip-card-check">✓</div>' : ''}<div class="clip-card-label">${clip.name} · ${clip.duration}s</div>`;
+                    card.children[0].appendChild(createPlaceholder(CLIP_GRADIENTS[clip.id], '', clip.icon, true));
+                    cg.appendChild(card);
+                });
+            }
+
+            const tt = getTotalTime();
+            document.getElementById('tl-info').textContent = `(${state.timelineClips.length} clips · ${tt}s)`;
+            document.getElementById('clear-btn').style.display = state.timelineClips.length > 0 ? 'block' : 'none';
+
+            const tlc = document.getElementById('tl-container');
+            tlc.innerHTML = '';
+            if (state.timelineClips.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'timeline-empty';
+                empty.textContent = 'Select a destination above and click clips to build your timeline';
+                tlc.appendChild(empty);
+            } else {
+                state.timelineClips.forEach(clip => {
+                    const el = document.createElement('div');
+                    el.className = 'timeline-clip';
+                    el.innerHTML = `<div style="width: 100%; height: 100%;"></div><div class="timeline-clip-overlay">${clip.name}</div><div class="timeline-clip-duration">${clip.duration}s</div><button class="timeline-clip-remove" onclick="removeClip('${clip.id}')">×</button>`;
+                    el.children[0].appendChild(createPlaceholder(CLIP_GRADIENTS[clip.id], '', clip.icon));
+                    tlc.appendChild(el);
+                });
+                const addBtn = document.createElement('div');
+                addBtn.className = 'timeline-add';
+                addBtn.textContent = '+';
+                addBtn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+                tlc.appendChild(addBtn);
+            }
+
+            const nxtBtn = document.getElementById('next-btn');
+            if (state.timelineClips.length === 0) { nxtBtn.style.opacity = '0.4'; nxtBtn.style.cursor = 'not-allowed'; } else { nxtBtn.style.opacity = '1'; nxtBtn.style.cursor = 'pointer'; }
+
+            const step1 = document.createElement('div');
+            step1.id = 'step1';
+            step1.style.display = state.createStep === 1 ? 'grid' : 'none';
+            step1.className = 'customize-grid slide-up';
+            step1.innerHTML = `
+                <div class="customize-left">
+                    <div class="section-box">
+                        <div class="section-box-title">🎬 Your Scenes <span style="color: #666; font-weight: 400;" id="customize-info">(0 clips · 0s)</span></div>
+                        <div class="timeline-container" id="customize-tl"></div>
+                    </div>
+                    <div class="section-box">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;"><div class="section-box-title">🎵 Music</div><div class="filter-group" id="music-filters"></div></div>
+                        <div class="music-list" id="music-list"></div>
+                        <div class="volume-control"><span style="font-size: 12px; color: #666;">🔊</span><input type="range" min="0" max="100" value="70" id="music-vol" onchange="state.musicVolume = this.value; document.getElementById('music-vol-display').textContent = this.value + '%'; render();"><span style="font-size: 12px; color: #f0d68a; min-width: 30px;" id="music-vol-display">70%</span></div>
+                    </div>
+                    <div class="section-box">
+                        <div class="section-box-title">Content Layer</div>
+                        <div class="content-options" id="content-opts"></div>
+                        <div id="freq-container" style="display: none;"><div style="font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-top: 14px; margin-bottom: 8px;">Select Frequency</div><div class="frequency-grid" id="freq-grid"></div></div>
+                        <div id="content-vol-container" style="display: none; margin-top: 14px;"><div class="volume-control"><span style="font-size: 12px; color: #666;">🎙</span><input type="range" min="0" max="100" value="50" id="content-vol" onchange="state.contentVolume = this.value; document.getElementById('content-vol-display').textContent = this.value + '%'; render();"><span style="font-size: 12px; color: #f0d68a; min-width: 30px;" id="content-vol-display">50%</span></div></div>
+                    </div>
+                </div>
+                <div class="customize-sidebar">
+                    <div><div style="font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Duration</div><div class="duration-grid" id="duration-grid"></div></div>
+                    <div><div style="font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Language</div><select id="lang-select" onchange="state.selectedLang = this.value; render();" style="width: 100%; padding: 10px 14px; border-radius: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #e0e0e0; font-size: 14px; outline: none; cursor: pointer;"></select></div>
+                    <div class="section-divider"></div>
+                    <div><div style="font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Summary</div><div class="summary-section" id="summary"></div></div>
+                    <button class="btn-preview" onclick="nextStep(); startPreview();">▶ Preview Experience</button>
+                    <button class="btn-full" onclick="prevStep()">← Back to Scenes</button>
+                </div>
+            `;
+            page.appendChild(step1);
+
+            if (state.createStep === 1) {
+                const ctm = document.getElementById('customize-tl');
+                ctm.innerHTML = '';
+                state.timelineClips.forEach(clip => {
+                    const el = document.createElement('div');
+                    el.className = 'timeline-clip';
+                    el.style.minWidth = '120px';
+                    el.style.height = '75px';
+                    el.innerHTML = `<div style="width: 100%; height: 100%;"></div><div class="timeline-clip-overlay" style="font-size: 9px;">${clip.name}</div><div class="timeline-clip-duration" style="font-size: 8px;">${clip.duration}s</div>`;
+                    el.children[0].appendChild(createPlaceholder(CLIP_GRADIENTS[clip.id], '', clip.icon));
+                    ctm.appendChild(el);
+                });
+                document.getElementById('customize-info').textContent = `(${state.timelineClips.length} clips · ${tt}s)`;
+
+                const mf = document.getElementById('music-filters');
+                getGenres().forEach(g => {
+                    const b = document.createElement('button');
+                    b.className = 'btn-filter' + (state.musicGenreFilter === g ? ' active' : '');
+                    b.textContent = g === 'all' ? 'All' : g;
+                    b.onclick = () => { state.musicGenreFilter = g; render(); };
+                    mf.appendChild(b);
+                });
+
+                const ml = document.getElementById('music-list');
+                getMusic().forEach(track => {
+                    const item = document.createElement('div');
+                    item.className = 'music-item' + (state.selectedMusic === track.id ? ' selected' : '');
+                    item.onclick = () => { state.selectedMusic = track.id; render(); };
+                    item.innerHTML = `<div class="music-icon">${state.selectedMusic === track.id ? '⏸' : '▶'}</div><div class="music-info"><div class="music-name">${track.name}</div><div class="music-artist">${track.artist} · ${track.genre}</div></div><div class="music-meta">${track.duration}</div><div class="music-meta">${track.bpm} BPM</div>`;
+                    ml.appendChild(item);
+                });
+
+                document.getElementById('music-vol').value = state.musicVolume;
+                document.getElementById('music-vol-display').textContent = state.musicVolume + '%';
+
+                const co = document.getElementById('content-opts');
+                CONTENT_TYPES.forEach(ct => {
+                    const item = document.createElement('div');
+                    item.className = 'content-item' + (state.selectedContent === ct.id ? ' selected' : '');
+                    item.onclick = () => { state.selectedContent = ct.id; render(); };
+                    item.innerHTML = `<div class="content-icon">${ct.icon}</div><div class="content-text"><div class="content-title">${ct.name}</div><div class="content-desc">${ct.desc}</div></div>`;
+                    co.appendChild(item);
+                });
+
+                document.getElementById('freq-container').style.display = state.selectedContent === 'frequency' ? 'block' : 'none';
+                const fg = document.getElementById('freq-grid');
+                fg.innerHTML = '';
+                FREQUENCIES.forEach(f => {
+                    const b = document.createElement('button');
+                    b.className = 'btn-frequency' + (state.selectedFreq === f ? ' active' : '');
+                    b.textContent = f;
+                    b.onclick = () => { state.selectedFreq = f; render(); };
+                    fg.appendChild(b);
+                });
+
+                document.getElementById('content-vol-container').style.display = ['meditation','spiritual','travel'].includes(state.selectedContent) ? 'block' : 'none';
+                document.getElementById('content-vol').value = state.contentVolume;
+                document.getElementById('content-vol-display').textContent = state.contentVolume + '%';
+
+                const dg = document.getElementById('duration-grid');
+                DURATIONS.forEach(d => {
+                    const b = document.createElement('button');
+                    b.className = 'btn-duration' + (state.selectedDuration === d ? ' active' : '');
+                    b.textContent = d + 'm';
+                    b.onclick = () => { state.selectedDuration = d; render(); };
+                    dg.appendChild(b);
+                });
+
+                const ls = document.getElementById('lang-select');
+                LANGUAGES.forEach(l => {
+                    const opt = document.createElement('option');
+                    opt.value = l;
+                    opt.textContent = l;
+                    if (l === state.selectedLang) opt.selected = true;
+                    ls.appendChild(opt);
+                });
+
+                const sum = document.getElementById('summary');
+                const items = [['Scenes', `${state.timelineClips.length} clips`],['Scene Time', `${tt}s raw`],['Duration', `${state.selectedDuration} min`],['Music', state.selectedMusic ? MUSIC_TRACKS.find(m => m.id === state.selectedMusic).name : 'None'],['Content', CONTENT_TYPES.find(c => c.id === state.selectedContent).name]];
+                if (state.selectedContent === 'frequency') items.push(['Frequency', state.selectedFreq]);
+                items.push(['Language', state.selectedLang]);
+                items.forEach(([k, v]) => {
+                    const item = document.createElement('div');
+                    item.className = 'summary-item';
+                    item.innerHTML = `<span class="summary-label">${k}</span><span class="summary-value">${v}</span>`;
+                    sum.appendChild(item);
+                });
+            }
+
+            const step2 = document.createElement('div');
+            step2.id = 'step2';
+            step2.style.display = state.createStep === 2 ? 'block' : 'none';
+            step2.className = 'preview-container slide-up';
+            step2.innerHTML = `
+                <div class="preview-title">Your Experience is Ready</div>
+                <p class="preview-description">Preview your creation, then save it to your library.</p>
+                <div class="preview-video" id="prev-video">
+                    <div class="preview-video-content" id="prev-content"></div>
+                    <div class="preview-overlay">
+                        <div class="preview-overlay-badge" id="prev-badge"></div>
+                        <div class="preview-overlay-title" id="prev-clip"></div>
+                    </div>
+                    <div class="preview-top-left">360° 8K</div>
+                    <div class="preview-top-right" id="prev-music"></div>
+                </div>
+                <div class="playback-bar">
+                    <button class="play-button" onclick="togglePlay()"><span id="play-icon">▶</span></button>
+                    <div class="time-display" id="curr-time">0:00</div>
+                    <div class="progress-bar-container" onclick="seekPrev(event)"><div class="progress-bar-fill" id="prog-bar" style="width: 0%"></div></div>
+                    <div class="time-display" id="tot-time">0:00</div>
+                </div>
+                <div class="preview-buttons">
+                    <button class="btn-save" onclick="showSaveModal()">💾 Save to Library</button>
+                    <button class="btn-edit" onclick="prevStep()">← Edit</button>
+                    <button class="btn-edit">📤 Share</button>
+                </div>
+            `;
+            page.appendChild(step2);
+
+            if (state.createStep === 2) {
+                const pc = document.getElementById('prev-content');
+                if (state.timelineClips.length > 0) {
+                    const clip = state.timelineClips[state.previewClipIdx % state.timelineClips.length];
+                    pc.style.background = CLIP_GRADIENTS[clip.id];
+                    pc.textContent = clip.icon;
+                }
+                if (state.selectedContent !== 'none') {
+                    document.getElementById('prev-badge').style.display = 'block';
+                    let txt = CONTENT_TYPES.find(c => c.id === state.selectedContent).name;
+                    if (state.selectedContent === 'frequency') txt += ' · ' + state.selectedFreq;
+                    document.getElementById('prev-badge').textContent = txt;
+                } else {
+                    document.getElementById('prev-badge').style.display = 'none';
+                }
+                if (state.timelineClips.length > 0) {
+                    document.getElementById('prev-clip').textContent = state.timelineClips[state.previewClipIdx % state.timelineClips.length].name;
+                }
+                const pm = document.getElementById('prev-music');
+                if (state.selectedMusic) {
+                    const track = MUSIC_TRACKS.find(m => m.id === state.selectedMusic);
+                    pm.innerHTML = `<span>🎵</span><span class="preview-top-right-text">${track.name}</span>`;
+                } else {
+                    pm.innerHTML = '';
+                }
+                document.getElementById('play-icon').textContent = state.previewPlaying ? '⏸' : '▶';
+                const ct = Math.floor(state.previewProgress / 100 * state.selectedDuration * 60);
+                document.getElementById('curr-time').textContent = '0:' + String(ct).padStart(2, '0');
+                document.getElementById('tot-time').textContent = state.selectedDuration + ':00';
+                document.getElementById('prog-bar').style.width = state.previewProgress + '%';
+            }
+        }
+
+        function renderLibrary() {
+            const page = document.getElementById('library-page');
+            page.innerHTML = `
+                <div class="library-header">
+                    <div><div class="library-title">My Library</div><p class="library-desc">Your saved experiences and favorites</p></div>
+                    <button class="btn-primary" onclick="setScreen('create')">+ Create New</button>
+                </div>
+                <div class="library-filters">
+                    <button class="btn-filter active">All</button>
+                    <button class="btn-filter">Recent</button>
+                    <button class="btn-filter">Favorites</button>
+                </div>
+                <div class="grid grid-3" id="lib-items"></div>
+            `;
+            const li = document.getElementById('lib-items');
+            SAVED_EXPERIENCES.forEach(exp => {
+                const card = document.createElement('div');
+                card.className = 'experience-card';
+                card.innerHTML = `
+                    <div class="experience-card-header" style="background: ${exp.gradient};">
+                        ${exp.fav ? '<div class="experience-card-heart">❤️</div>' : ''}
+                        <div class="card-absolute-top-left">360° 8K</div>
+                    </div>
+                    <div class="experience-card-body">
+                        <div class="experience-card-title-row">
+                            <div class="experience-info">
+                                <div class="experience-title">${exp.name}</div>
+                                <div class="experience-meta">${exp.clips} clips · ${exp.duration} · ${exp.date}</div>
+                            </div>
+                            <div class="experience-actions">
+                                <button class="btn-action">✏️</button>
+                                <button class="btn-action">📤</button>
+                                <button class="btn-action">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                li.appendChild(card);
+            });
+        }
+
+        function renderLive() {
+            const page = document.getElementById('live-page');
+            page.innerHTML = `
+                <div class="live-header"><div class="live-title">🔴 Live Experiences</div><p class="live-desc">Join live 360° streams from artists, nature cams, and cities</p></div>
+                <div class="live-filters" id="live-filt"></div>
+                <div class="grid grid-3" id="live-items"></div>
+            `;
+            const lf = document.getElementById('live-filt');
+            [['all','All'],['artist','Music Artists'],['nature','Nature'],['city','Cities']].forEach(([k,v]) => {
+                const b = document.createElement('button');
+                b.className = 'btn-filter' + (state.liveFilter === k ? ' active' : '');
+                b.textContent = v;
+                b.onclick = () => { state.liveFilter = k; render(); };
+                lf.appendChild(b);
+            });
+            const li = document.getElementById('live-items');
+            getLive().forEach(s => {
+                const card = document.createElement('div');
+                card.className = 'live-card';
+                card.innerHTML = `
+                    <div class="live-card-image" style="background: ${LIVE_GRADIENTS[s.id]}; color: rgba(255,255,255,0.9); font-size: 36px; display: flex; align-items: center; justify-content: center;">
+                        ${s.icon}
+                        <div class="live-badge-top-left"><span class="live-indicator"></span> LIVE</div>
+                        <div class="live-badge-top-right">👁 ${s.viewers.toLocaleString()}</div>
+                        <div class="live-card-overlay">
+                            <div class="live-card-title">${s.title}</div>
+                            <div class="live-card-name">${s.name}</div>
+                        </div>
+                    </div>
+                    <div class="live-card-footer">
+                        <span class="live-type-badge live-type-${s.type}">${s.type}</span>
+                        <button class="btn-join">Join Stream</button>
+                    </div>
+                `;
+                li.appendChild(card);
+            });
+        }
+
+        updateNav();
+        render();
+    </script>
+</body>
+</html>
